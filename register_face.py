@@ -48,10 +48,13 @@ while True:
 
             key = cv2.waitKey(1)
             if key == ord('s'):
-                face_resized = cv2.resize(face,(200,200))
-                cv2.imwrite(f"{save_dir}/{count}.jpg",face_resized)
-                print(f"Saved image {count}")
-                count +=1
+                if (x2 - x1) >= 120 and (y2 - y1) >= 120:
+                    face_resized = cv2.resize(face,(200,200))
+                    cv2.imwrite(f"{save_dir}/{count}.jpg",face_resized)
+                    print(f"Saved image {count}")
+                    count +=1
+                else:
+                    print("Face is too small- move closer")
 
             if key == 27 or key == ord('q'):
                 cap.release()
@@ -59,4 +62,5 @@ while True:
                 print("Registration complete")
                 exit()
 
-    cv2.imshow("Face Registration",frame)
+cv2.imshow("Face Registration",frame)
+key = cv2.waitKey(1)
