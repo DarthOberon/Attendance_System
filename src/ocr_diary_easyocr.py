@@ -1,105 +1,110 @@
+import easyocr
 import cv2
 import numpy as np
-import easyocr
 import re
 
-# -----------------------------
-# CONFIG
-# -----------------------------
-CONFIDENCE_THRESHOLD = 0.40
-MIN_CONTOUR_AREA = 150
-# -----------------------------
+CONF_THRESHOLD = 0.35
+LINE_Y_THRESHOLD = 25   # vertical grouping sensitivity
+ROLL_MODE = True        # True = roll numbers (1-3 digits)
 
-reader = easyocr.Reader(['en'], gpu=False)
+def preprocess_image(image_path):
+    img = cv2.imread(image_path)
 
-def remove_horizontal_lines(binary_img):
+    if img is None:
+        print("Image not found")
+        return None
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Slight resize only
+    gray = cv2.resize(gray, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
+
+    return gray
+
+
+def group_by_lines(detections):
     """
-    Removes notebook horizontal lines using morphology.
+    Groups detected text boxes by Y coordinate.
     """
-    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (40, 1))
-    detected_lines = cv2.morphologyEx(binary_img, cv2.MORPH_OPEN, horizontal_kernel, iterations=2)
-    cleaned = cv2.subtract(binary_img, detected_lines)
-    return cleaned
+    lines = []
+
+    for det in detections:
+        (bbox, text, conf) = det
+        y_center = int((bbox[0][1] + bbox[2][1]) / 2)
+
+        placed = False
+        for line in lines:
+            if abs(line["y"] - y_center) < LINE_Y_THRESHOLD:
+                line["items"].append(det)
+                placed = True
+                break
+
+        if not placed:
+            lines.append({"y": y_center, "items": [det]})
+
+    return lines
 
 
-def preprocess_image(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # Increase contrast
-    gray = cv2.equalizeHist(gray)
-
-    # Adaptive threshold
-    thresh = cv2.adaptiveThreshold(
-        gray, 255,
-        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv2.THRESH_BINARY_INV,
-        15, 8
-    )
-
-    # Remove notebook lines
-    cleaned = remove_horizontal_lines(thresh)
-
-    # Slight dilation to strengthen digits
-    kernel = np.ones((2,2), np.uint8)
-    cleaned = cv2.dilate(cleaned, kernel, iterations=1)
-
-    return cleaned
+def normalize_number(num):
+    if ROLL_MODE:
+        # Accept 1–3 digit numbers only
+        if 1 <= len(num) <= 3:
+            return num.zfill(3)
+    return None
 
 
-def extract_diary_numbers(image_path):
+def extract_numbers(image_path):
 
-    image = cv2.imread(image_path)
-    if image is None:
-        print("Image not found.")
+    img = preprocess_image(image_path)
+    if img is None:
         return []
 
-    processed = preprocess_image(image)
+    reader = easyocr.Reader(['en'], gpu=False)
 
-    contours, _ = cv2.findContours(processed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    results = reader.readtext(
+        img,
+        allowlist='0123456789',
+        paragraph=False,
+        detail=1,
+        mag_ratio=2
+    )
 
-    extracted_numbers = []
-
-    # Sort contours top to bottom
-    contours = sorted(contours, key=lambda c: cv2.boundingRect(c)[1])
-
-    for cnt in contours:
-        x, y, w, h = cv2.boundingRect(cnt)
-
-        area = cv2.contourArea(cnt)
-
-        if area < MIN_CONTOUR_AREA:
+    # Filter by confidence
+    filtered = []
+    for bbox, text, conf in results:
+        text = text.replace('l','1').replace('I','1').replace('|','1').replace('L','1')
+        print(f"Detected raw: {text} | Conf: {conf:.2f}")
+        if conf < CONF_THRESHOLD:
             continue
 
-        # Crop digit region from original image
-        roi = image[y:y+h, x:x+w]
+        clean = re.sub(r'\D', '', text)
+        if clean:
+            filtered.append((bbox, clean, conf))
 
-        # Resize for better OCR
-        roi = cv2.resize(roi, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+    # Group by lines
+    lines = group_by_lines(filtered)
 
-        results = reader.readtext(roi, allowlist='0123456789')
+    final_numbers = []
 
-        for (bbox, text, confidence) in results:
+    for line in lines:
+        # Sort left to right
+        sorted_line = sorted(line["items"], key=lambda x: x[0][0][0])
 
-            print(f"Detected: {text} | Confidence: {confidence:.2f}")
+        for bbox, text, conf in sorted_line:
+            normalized = normalize_number(text)
+            if normalized:
+                final_numbers.append(normalized)
 
-            if confidence < CONFIDENCE_THRESHOLD:
-                continue
+    # Remove duplicates
+    final_numbers = list(set(final_numbers))
 
-            clean_text = re.sub(r"\D", "", text)
-
-            if clean_text.isdigit() and 1 <= len(clean_text) <= 3:
-                normalized = clean_text.zfill(3)
-                extracted_numbers.append(normalized)
-
-    extracted_numbers = list(set(extracted_numbers))
-
-    return extracted_numbers
+    return sorted(final_numbers)
 
 
 if __name__ == "__main__":
-    image_path = r"E:\AryanWork_10\IDT_ATTENDAC\input_images\sample5.jpeg"
+    image_path = r"E:\AryanWork_10\IDT_ATTENDAC\input_images\sample13.jpeg"
 
-    numbers = extract_diary_numbers(image_path)
+    numbers = extract_numbers(image_path)
 
-    print("\nFinal Normalized Numbers:")
+    print("\nFinal Clean Roll Numbers:")
     print(numbers)
