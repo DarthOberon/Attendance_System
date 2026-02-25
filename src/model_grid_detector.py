@@ -51,34 +51,92 @@ def detect_grid(image_path):
     print("\n--------Attendance Scan Results-----------")
 
 
-    for index, row in enumerate(rows[1:],start=1):
+    # for index, row in enumerate(rows[1:],start=1):
+        
+    #     if len(row) != 3:
+    #         continue
+
+    #     enroll_box = row[0]
+    #     name_box = row[1]
+    #     status_box = row[2]
+
+    #     ex,ey,ew,eh = enroll_box
+    #     enroll_crop = gray[ey+2 : ew+eh-2, ex+2 : ex+ew-2]
+
+    #     _,enroll_thresh = cv2.threshold(enroll_crop,150,255,cv2.THRESH_BINARY)
+
+    #     roll_no = pytesseract.image_to_string(
+    #         enroll_thresh,
+    #         config='--psm 7 -c tessedit_char_whitelist=0123456789'
+    #     ).strip()
+
+    #     if roll_no == "":
+    #         roll_no = "UNKNOWN"
+
+    #     sx,sy,sw,sh = status_box
+    #     margin = 4
+
+    #     if sh>(margin * 2) and sw > (margin * 2):
+    #         status_crop = thresh[sy+margin : sy+sh-margin,sx+margin:sx+sw-margin]
+
+    #     # _, crop_thresh = cv2.threshold(status_crop,150,255,cv2.THRESH_BINARY_INV)
+
+    #         ink_pixels = cv2.countNonZero(status_crop)
+
+    #         is_present = ink_pixels >15
+
+    #         if is_present:
+    #             print(f"Row {index}: Present (Ink pixels detected: {ink_pixels})")
+    #         else:
+    #             print(f"Row {index}: Absent (Empty box, pixels: {ink_pixels})")
+    #     else:
+    #         print(f"Row {index}: Box too small to read")
+
+    for index, row in enumerate(rows[1:], start=1):
         
         if len(row) != 3:
             continue
-
+            
         enroll_box = row[0]
         name_box = row[1]
         status_box = row[2]
 
-        sx,sy,sw,sh = status_box
+        # --- 1. OCR THE ENROLLMENT NUMBER ---
+        ex, ey, ew, eh = enroll_box
+        roll_no = "UNKNOWN" # Default fallback
         
+        # SAFETY CHECK: Only crop and OCR if the box is actually a decent size!
+        if ew > 10 and eh > 10:
+            enroll_crop = gray[ey+2 : ey+eh-2, ex+2 : ex+ew-2]
+            _, enroll_thresh = cv2.threshold(enroll_crop, 150, 255, cv2.THRESH_BINARY)
+            
+            # Double check the crop didn't result in an empty image array
+            if enroll_thresh.size > 0:
+                roll_no = pytesseract.image_to_string(
+                    enroll_thresh, 
+                    config='--psm 7 -c tessedit_char_whitelist=0123456789'
+                ).strip()
+
+        if roll_no == "":
+            roll_no = "UNKNOWN"
+
+        # --- 2. OMR THE STATUS BOX ---
+        sx, sy, sw, sh = status_box
         margin = 4
-
-        if sh>(margin * 2) and sw > (margin * 2):
-            status_crop = thresh[sy+margin : sy+sh-margin,sx+margin:sx+sw-margin]
-
-        # _, crop_thresh = cv2.threshold(status_crop,150,255,cv2.THRESH_BINARY_INV)
-
+        
+        if sh > (margin * 2) and sw > (margin * 2): 
+            status_crop = thresh[sy+margin : sy+sh-margin, sx+margin : sx+sw-margin]
             ink_pixels = cv2.countNonZero(status_crop)
-
-            is_present = ink_pixels >15
-
+            
+            is_present = ink_pixels > 15  
+            
+            # --- 3. PRINT THE FINAL RESULT (Using the new format!) ---
             if is_present:
-                print(f"Row {index}: Present (Ink pixels detected: {ink_pixels})")
+                print(f"Roll No [{roll_no}]: ✅ PRESENT (Ink: {ink_pixels})")
             else:
-                print(f"Row {index}: Absent (Empty box, pixels: {ink_pixels})")
+                print(f"Roll No [{roll_no}]: ❌ ABSENT (Ink: {ink_pixels})")
         else:
-            print(f"Row {index}: Box too small to read")
+            print(f"Row {index}: ⚠️ Status Box too small to read")
 
     boxes_img = img.copy() 
     for x,y,w,h in boxes:
@@ -96,5 +154,5 @@ def detect_grid(image_path):
 
 
 if __name__ == "__main__":
-    image_path = r"E:\AryanWork_10\IDT_ATTENDAC\input_images\sheet_sample4.png"
+    image_path = r"E:\AryanWork_10\IDT_ATTENDAC\input_images\sheet_sample6.png"
     detect_grid(image_path)
