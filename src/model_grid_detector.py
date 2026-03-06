@@ -105,12 +105,12 @@ def detect_grid(image_path):
         ex, ey, ew, eh = enroll_box
         roll_no = "UNKNOWN" # Default fallback
         
-        # SAFETY CHECK: Only crop and OCR if the box is actually a decent size!
+       
         if ew > 10 and eh > 10:
             enroll_crop = gray[ey+2 : ey+eh-2, ex+2 : ex+ew-2]
             _, enroll_thresh = cv2.threshold(enroll_crop, 150, 255, cv2.THRESH_BINARY)
             
-            # Double check the crop didn't result in an empty image array
+            
             if enroll_thresh.size > 0:
                 roll_no = pytesseract.image_to_string(
                     enroll_thresh, 
