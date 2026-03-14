@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Attendance System Login</title>
+<!-- Tailwind CSS CDN with plugins -->
+<!-- Google Fonts for professional typography -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style data-purpose="base-typography">
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+<style data-purpose="custom-layout">
+    :root {
+      --college-blue: #1e3a8a;
+      --college-blue-hover: #172554;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --blue-600: #2563eb;
+      --blue-700: #1d4ed8;
+      --blue-800: #1e40af;
+      --white: #ffffff;
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--slate-50);
+      background-image: radial-gradient(var(--slate-300) 0.5px, transparent 0.5px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 448px;
+    }
+
+    .login-card {
+      background-color: var(--white);
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--slate-200);
+      overflow: hidden;
+    }
+
+    .header-section {
+      padding: 2.5rem 2rem 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .logo-container {
+      width: 6rem;
+      height: 6rem;
+      margin-bottom: 1.5rem;
+      background-color: var(--slate-100);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fafafa;
+    }
+
+    .logo-img {
+      width: 4rem;
+      height: 4rem;
+      object-fit: contain;
+    }
+
+    .title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--slate-800);
+    }
+
+    .subtitle {
+      color: var(--slate-500);
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-container {
+      padding: 0 2rem 2.5rem 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      margin-bottom: 0.5rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      inset-block: 0;
+      left: 0;
+      padding-left: 0.75rem;
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+      color: var(--slate-400);
+    }
+
+    .input-icon svg {
+      height: 1.25rem;
+      width: 1.25rem;
+    }
+
+    .input-field {
+      display: block;
+      width: 100%;
+      padding: 0.625rem 0.75rem 0.625rem 2.5rem;
+      border: 1px solid var(--slate-300);
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--slate-900);
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: transparent;
+      box-shadow: 0 0 0 2px var(--blue-600);
+    }
+
+    .secondary-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .checkbox-input {
+      height: 1rem;
+      width: 1rem;
+      color: var(--blue-600);
+      border: 1px solid var(--slate-300);
+      border-radius: 0.25rem;
+      cursor: pointer;
+    }
+
+    .checkbox-label {
+      margin-left: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--slate-600);
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--blue-700);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+      color: var(--blue-800);
+    }
+
+    .submit-button {
+      width: 100%;
+      background-color: var(--college-blue);
+      color: var(--white);
+      font-weight: 700;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .submit-button:hover {
+      background-color: var(--college-blue-hover);
+    }
+
+    .submit-button:active {
+      transform: scale(0.98);
+    }
+
+    .footer-info {
+      background-color: var(--slate-50);
+      border-top: 1px solid var(--slate-100);
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--slate-400);
+      font-weight: 500;
+    }
+
+    .support-section {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .support-text {
+      font-size: 0.875rem;
+      color: var(--slate-500);
+    }
+
+    .support-link {
+      color: var(--blue-700);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .support-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="">
+<!-- BEGIN: LoginContainer -->
+<main class="login-wrapper" data-purpose="login-wrapper">
+<!-- BEGIN: LoginCard -->
+<div class="login-card" data-purpose="login-card">
+<!-- BEGIN: HeaderSection -->
+<div class="header-section">
+<!-- Logo Placeholder -->
+<div class="logo-container" data-purpose="logo-container">
+<img alt="College Logo" class="logo-img" src="{{ url_for('static', filename='images/LOGO_.jpg') }}"/>
+</div>
+<h1 class="title">Attendance System</h1>
+<p class="subtitle">Please enter your credentials to access your account</p>
+</div>
+<!-- END: HeaderSection -->
+<!-- BEGIN: LoginForm -->
+ {% if error %}
+<div style="background:#fee2e2; color:#991b1b; padding:10px 14px; border-radius:8px; margin-bottom:16px; font-size:0.875rem; border-left:4px solid #dc2626;">
+    {{ error }}
+</div>
+{% endif %}
+<div class="form-container">
+<form action="{{ url_for('login') }}" class="" method="POST">
+<!-- Email Field -->
+<div class="form-group">
+<label class="label" for="email">Email Address</label>
+<div class="input-wrapper">
+<div class="input-icon">
+<!-- Simple SVG Email Icon -->
+<svg class="" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="input-field" id="email" name="email" placeholder="professor@college.edu" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="form-group">
+<label class="label" for="password">Password</label><div class="input-wrapper">
+<div class="input-icon">
+<!-- Simple SVG Lock Icon -->
+<svg class="" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="input-field" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Secondary Actions -->
+<div class="secondary-actions">
+<div class="checkbox-group">
+<input class="checkbox-input" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="checkbox-label" for="remember-me">Remember me</label>
+</div>
+<a class="forgot-link" data-purpose="forgot-password-link" href="#">Forgot Password?</a>
+</div>
+<!-- Login Button -->
+<button class="submit-button" data-purpose="submit-button" type="submit">
+            LOGIN
+          </button>
+</form>
+</div>
+<!-- END: LoginForm -->
+<!-- BEGIN: FooterBranding -->
+<div class="footer-info" data-purpose="footer-info">
+<p class="footer-text">Secure Portal for Faculty and Staff</p>
+</div>
+<!-- END: FooterBranding -->
+</div>
+<!-- END: LoginCard -->
+<!-- Additional Support Links -->
+<div class="support-section">
+<p class="support-text">
+        Need assistance? <a class="support-link" href="#">Contact IT Support</a>
+</p>
+</div>
+</main>
+<!-- END: LoginContainer -->
+</body></html>

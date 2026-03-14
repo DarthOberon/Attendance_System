@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Professor Dashboard - Attendance System</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<style data-purpose="custom-theme">/* Global Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --academic-blue-dark: #1e3a8a;
+      --academic-blue-medium: #1e40af;
+      --academic-blue-light: #eff6ff;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --green-500: #22c55e;
+      --green-600: #16a34a;
+    }
+    body {
+      background-color: var(--slate-50);
+      color: var(--slate-800);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    @media (min-width: 640px) { .container { padding: 0 1.5rem; } }
+    @media (min-width: 1024px) { .container { padding: 0 2rem; } }
+
+    /* Header */
+    .main-header {
+      background: white;
+      border-bottom: 1px solid var(--slate-200);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-content {
+      height: 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--academic-blue-dark);
+    }
+    .user-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .welcome-text {
+      color: var(--slate-600);
+      display: none;
+    }
+    @media (min-width: 768px) { .welcome-text { display: block; } }
+    .welcome-text .user-name {
+      font-weight: 600;
+      color: var(--slate-800);
+    }
+    .logout-btn {
+      background-color: var(--slate-100);
+      color: var(--slate-700);
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid var(--slate-200);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .logout-btn:hover {
+      background-color: #fef2f2;
+      color: #dc2626;
+    }
+
+    /* Secondary Navigation */
+    .sub-nav {
+      background: white;
+      border-bottom: 1px solid var(--slate-200);
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .sub-nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-link {
+      padding: 1rem 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--slate-500);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover {
+      color: var(--academic-blue-medium);
+    }
+    .nav-link.active {
+      border-bottom: 2px solid var(--academic-blue-dark);
+      color: var(--academic-blue-dark);
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    .main-wrapper {
+      flex-grow: 1;
+      padding: 2rem 0;
+    }
+
+    /* Stats Section */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (min-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--slate-200);
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .stat-value-container {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: baseline;
+    }
+    .stat-number {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+    .stat-badge {
+      margin-left: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+    }
+    .badge-active {
+      background-color: var(--academic-blue-light);
+      color: var(--academic-blue-medium);
+    }
+    .badge-muted {
+      color: var(--slate-400);
+    }
+    .percentage-text {
+      color: var(--green-600);
+    }
+    .progress-container {
+      margin-left: 1rem;
+      flex-grow: 1;
+      background-color: var(--slate-100);
+      border-radius: 9999px;
+      height: 0.5rem;
+    }
+    .progress-bar {
+      background-color: var(--green-500);
+      height: 100%;
+      border-radius: 9999px;
+    }
+
+    /* Table Section */
+    .data-section {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--slate-200);
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(248, 250, 252, 0.5);
+    }
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--slate-800);
+    }
+    .view-all-link {
+      font-size: 0.875rem;
+      color: #1d4ed8;
+      font-weight: 500;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .view-all-link:hover {
+      text-decoration: underline;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .data-table th {
+      background-color: var(--slate-50);
+      padding: 0.75rem 1.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .data-table td {
+      padding: 1rem 1.5rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--slate-100);
+    }
+    .data-table tr:hover {
+      background-color: var(--slate-50);
+    }
+    .data-table .cell-date {
+      font-weight: 500;
+      color: var(--slate-900);
+    }
+    .data-table .cell-secondary {
+      color: var(--slate-600);
+    }
+    .data-table .cell-center {
+      text-align: center;
+    }
+    .data-table .cell-right {
+      text-align: right;
+    }
+    .data-table .cell-bold-right {
+      text-align: right;
+      font-weight: 600;
+      color: var(--slate-900);
+    }
+
+    /* Footer */
+    .main-footer {
+      background: white;
+      border-top: 1px solid var(--slate-200);
+      padding: 1.5rem 0;
+      margin-top: auto;
+    }
+    .footer-text {
+      color: var(--slate-400);
+      font-size: 0.875rem;
+      text-align: center;
+    }</style>
+</head>
+<body class="min-h-screen flex flex-col font-sans">
+<!-- BEGIN: MainHeader -->
+<header class="main-header" data-purpose="top-navigation">
+<div class="container">
+<div class="header-content">
+<div class="brand-logo" id="app-logo">Attendance System</div>
+<div class="user-nav">
+<span class="welcome-text">Welcome: <span class="user-name">Prof. John Doe</span></span>
+<button class="logout-btn" data-purpose="logout-button">
+            Logout
+          </button>
+</div>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: SecondaryNavigation -->
+<nav class="sub-nav" data-purpose="secondary-navigation">
+<div class="container">
+<div class="sub-nav-links">
+<a class="nav-link active" href="{{ url_for('dashboard') }}">Dashboard</a>
+<a class="nav-link" href="{{ url_for('upload') }}">Upload Attendance</a>
+<a class="nav-link" href="#">Students</a>
+<a class="nav-link" href="#">Reports</a>
+</div>
+</div>
+</nav>
+<!-- END: SecondaryNavigation -->
+<!-- BEGIN: MainContent -->
+<main class="main-wrapper container">
+<!-- BEGIN: HeroStatsSection -->
+<section class="stats-grid" data-purpose="hero-stats">
+<!-- Total Students Card -->
+<div class="stat-card">
+<span class="stat-label">Total Students</span>
+<div class="stat-value-container">
+<span class="stat-number">120</span>
+<span class="stat-badge badge-active">Active</span>
+</div>
+</div>
+<!-- Attendance Today Card -->
+<div class="stat-card">
+<span class="stat-label">Attendance Today</span>
+<div class="stat-value-container">
+<span class="stat-number">95</span>
+<span class="stat-badge badge-muted">/ 120 students</span>
+</div>
+</div>
+<!-- Attendance Percentage Card -->
+<div class="stat-card">
+<span class="stat-label">Attendance Percentage</span>
+<div class="stat-value-container">
+<span class="stat-number percentage-text">79%</span>
+<div class="progress-container">
+<div class="progress-bar" style="width: 79%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: HeroStatsSection -->
+<!-- BEGIN: RecentAttendanceTable -->
+<section class="data-section" data-purpose="attendance-records">
+<div class="section-header">
+<h2 class="section-title">Recent Attendance Records</h2>
+<button class="view-all-link">View All</button>
+</div>
+<div class="table-container">
+<table class="data-table" id="attendance-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Subject</th>
+<th>Branch</th>
+<th class="cell-center">Semester</th>
+<th class="cell-right">Students Marked</th>
+</tr>
+</thead>
+<tbody>
+<!-- Record 1 -->
+<tr>
+<td class="cell-date">12-03-2026</td>
+<td class="cell-secondary">AI</td>
+<td class="cell-secondary">CSE</td>
+<td class="cell-center">4</td>
+<td class="cell-bold-right">95</td>
+</tr>
+<!-- Record 2 -->
+<tr>
+<td class="cell-date">11-03-2026</td>
+<td class="cell-secondary">DBMS</td>
+<td class="cell-secondary">CSE</td>
+<td class="cell-center">4</td>
+<td class="cell-bold-right">92</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- END: RecentAttendanceTable -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: Footer -->
+<footer class="main-footer">
+<div class="container footer-text">
+      © 2026 Attendance Management System. All rights reserved.
+    </div>
+</footer>
+<!-- END: Footer -->
+</body></html>

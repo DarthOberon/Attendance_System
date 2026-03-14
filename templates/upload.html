@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Upload Attendance - Academic System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #ec5b13;
+      --primary-hover: #d14d0d;
+      --bg-light: #f8f6f6;
+      --bg-white: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --card-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+      --radius-xl: 0.75rem;
+      --radius-lg: 0.5rem;
+    }
+    body {
+      font-family: 'Public Sans', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      margin: 0;
+      min-height: 100vh;
+    }
+    .layout-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 2.5rem;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header-logo span { color: var(--primary); font-size: 1.875rem; }
+    .header-logo h2 { font-size: 1.125rem; font-weight: 700; margin: 0; }
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-left: 1px solid var(--border-color);
+      padding-left: 1.5rem;
+    }
+    .profile-info { text-align: right; }
+    .profile-name { font-size: 0.875rem; font-weight: 700; margin: 0; }
+    .profile-dept { font-size: 0.75rem; color: var(--text-muted); margin: 0; }
+    .avatar {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 9999px;
+      background-size: cover;
+      border: 1px solid rgba(236,91,19,0.2);
+      padding: 2px;
+    }
+    .logout-btn {
+      background: #f1f5f9;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: #334155;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .logout-btn:hover { background: #fee2e2; color: #dc2626; }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem;
+    }
+    .content-wrapper { width: 100%; max-width: 56rem; }
+    .page-header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .page-header h1 { font-size: 1.875rem; font-weight: 700; margin: 0 0 0.25rem 0; }
+    .page-header p { color: var(--text-muted); margin: 0; }
+    .main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+    @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--bg-white);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 1.5rem;
+    }
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card-title span { color: var(--primary); }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .form-group.full-width { grid-column: span 2; }
+    label { font-size: 0.875rem; font-weight: 500; color: #334155; }
+    select, input[type="text"] {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      padding: 0.625rem;
+      font-size: 1rem;
+      width: 100%;
+      font-family: inherit;
+    }
+    select:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(236,91,19,0.15);
+    }
+    .radio-section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .radio-group-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      margin-bottom: 0.75rem;
+      font-size: 0.875rem;
+      color: #334155;
+      font-weight: 500;
+    }
+    .radio-option input[type="radio"] {
+      width: auto;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .upload-area {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1rem;
+      background: #fafafa;
+      height: 16rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .upload-area:hover {
+      background: rgba(236,91,19,0.05);
+      border-color: rgba(236,91,19,0.5);
+    }
+    .upload-icon { font-size: 3rem; color: #cbd5e1; }
+    .info-box {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: rgba(236,91,19,0.05);
+      border: 1px solid rgba(236,91,19,0.1);
+      border-radius: var(--radius-lg);
+      display: flex;
+      gap: 0.75rem;
+    }
+    .info-box p { font-size: 11px; color: #475569; margin: 0; }
+    .btn-process {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-weight: 700;
+      font-size: 1.125rem;
+      padding: 1rem;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 15px -3px rgba(236,91,19,0.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .btn-process:hover { background: var(--primary-hover); }
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1rem 0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+    }
+    .footer-links { display: flex; gap: 1rem; }
+    .footer-links a { color: inherit; text-decoration: none; }
+    .footer-links a:hover { color: var(--primary); }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout-container">
+
+    <!-- HEADER -->
+    <header>
+      <div class="header-logo">
+        <span class="material-symbols-outlined">school</span>
+        <h2>Attendance System</h2>
+      </div>
+      <div class="header-nav">
+        <nav class="nav-links">
+          <!-- FLASK: nav links -->
+          <a href="{{ url_for('dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('reports') }}">Reports</a>
+        </nav>
+        <div class="user-profile">
+          <div class="profile-info">
+            <!-- FLASK: faculty name and college from session -->
+            <p class="profile-name">{{ faculty_name }}</p>
+            <p class="profile-dept">{{ college }}</p>
+          </div>
+          <div class="avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDzOcha2mEnGDMGiGJrxyzS7aPH7BpOQ5lw8mVkvbrPoFwj3GxPUkBIKmihnjkXuD5uuhBtVSxiRfmQoJMauvYNxXBSJ24YrYat8Ho7zmIIqmcfwmRBkLouFMIAFisHfxvVI0_35PmVvEfactW1CdheagRprrBWG_KXEqwCEXsqgh5cYOicKYk8elWKT5DQwfeq0ktQjg7_3wL9tXQNUWaTW7DocokMXfYVqcGqIW5ZoWXizvNegRHIGulQLL7-McniXQs6hXHLXps");'></div>
+          <!-- FLASK: logout link -->
+          <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="content-wrapper">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+          <h1>Upload Attendance</h1>
+          <p>Configure class parameters and upload evidence to process student records.</p>
+        </div>
+
+        <!-- FLASK: error message if OCR or validation fails -->
+        {% if error %}
+        <div style="background:#fee2e2; color:#991b1b; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:0.875rem; border-left:4px solid #dc2626;">
+          ⚠ {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- FLASK: form posts to ocr_preview route, enctype needed for file upload -->
+        <form action="{{ url_for('ocr_preview') }}" method="POST" enctype="multipart/form-data">
+          <div class="main-grid">
+
+            <!-- LEFT COLUMN -->
+            <div class="form-column">
+
+              <!-- CLASS DETAILS CARD -->
+              <section class="card">
+                <h3 class="card-title">
+                  <span class="material-symbols-outlined">fact_check</span>Class Details
+                </h3>
+                <div class="form-grid">
+
+                  <div class="form-group">
+                    <label>College</label>
+                    <!-- FLASK: pre-select faculty's own college -->
+                    <select name="college">
+                      <option value="ASOIT" {% if college == 'ASOIT' %}selected{% endif %}>ASOIT</option>
+                      <option value="SOCET" {% if college == 'SOCET' %}selected{% endif %}>SOCET</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Branch</label>
+                    <!-- FLASK: dynamic branches from app.py -->
+                    <select name="branch">
+                      {% for b in branches %}
+                      <option value="{{ b }}">{{ b }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Semester</label>
+                    <!-- FLASK: dynamic semesters 1-8 from app.py -->
+                    <select name="semester">
+                      {% for sem in semesters %}
+                      <option value="{{ sem }}">{{ sem }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Division</label>
+                    <!-- FLASK: dynamic divs from app.py -->
+                    <select name="div">
+                      {% for d in divs %}
+                      <option value="{{ d }}">{{ d }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label>Subject</label>
+                    <input name="subject" placeholder="e.g. Data Structures and Algorithms" type="text" required />
+                  </div>
+
+                </div>
+              </section>
+
+              <!-- MODE & ID TYPE CARD -->
+              <section class="card">
+                <div class="radio-section-grid">
+
+                  <!-- Mode selection -->
+                  <div>
+                    <h3 class="radio-group-title">Mode</h3>
+                    <label class="radio-option">
+                      <input checked name="mode" type="radio" value="screenshot" />
+                      <span>Screenshot</span>
+                    </label>
+                    <label class="radio-option">
+                      <input name="mode" type="radio" value="diary" />
+                      <span>Diary Image</span>
+                    </label>
+                    <label class="radio-option">
+                      <input name="mode" type="radio" value="sheet" />
+                      <span>Sheet Scanning</span>
+                    </label>
+                  </div>
+
+                  <!-- ID Type selection -->
+                  <div>
+                    <h3 class="radio-group-title">ID Type</h3>
+                    <label class="radio-option">
+                      <!-- FLASK: name must be id_type to match request.form.get('id_type') in app.py -->
+                      <input checked name="id_type" type="radio" value="roll" />
+                      <span>Roll Number</span>
+                    </label>
+                    <label class="radio-option">
+                      <input name="id_type" type="radio" value="enrollment" />
+                      <span>Enrollment Number</span>
+                    </label>
+                  </div>
+
+                </div>
+              </section>
+
+            </div>
+            <!-- END LEFT COLUMN -->
+
+            <!-- RIGHT COLUMN -->
+            <div class="action-column">
+              <section class="card">
+                <h3 class="card-title">
+                  <span class="material-symbols-outlined">cloud_upload</span>Attendance Image
+                </h3>
+
+                <!-- Clicking the area triggers hidden file input -->
+                <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+                  <span class="material-symbols-outlined upload-icon">image</span>
+                  <div>
+                    <p style="font-weight:600; color:#334155; margin:0;">Drop files here</p>
+                    <p style="font-size:0.75rem; color:#64748b; margin-top:0.25rem;">PNG, JPG up to 10MB</p>
+                  </div>
+                  <button type="button" style="background:white; border:1px solid #e2e8f0; padding:0.5rem 1rem; border-radius:0.5rem; font-size:0.875rem; font-weight:600; cursor:pointer;">
+                    Choose File
+                  </button>
+                  <!-- FLASK: actual file input, name="image" matches request.files.get('image') -->
+                  <input type="file" id="imageInput" name="image" accept=".png,.jpg,.jpeg" style="display:none"
+                    onchange="document.getElementById('fileName').textContent = this.files[0]?.name || ''" />
+                  <!-- Shows selected filename in green -->
+                  <p id="fileName" style="font-size:0.8rem; color:#16a34a; font-weight:600; margin:0;"></p>
+                </div>
+
+                <div class="info-box">
+                  <span class="material-symbols-outlined" style="color:var(--primary); font-size:1rem;">info</span>
+                  <p>Ensure the lighting is clear and all student IDs are visible for accurate processing.</p>
+                </div>
+
+              </section>
+
+              <!-- SUBMIT BUTTON — type=submit sends the whole form -->
+              <button type="submit" class="btn-process">
+                <span class="material-symbols-outlined">settings_suggest</span>
+                Process Attendance
+              </button>
+
+            </div>
+            <!-- END RIGHT COLUMN -->
+
+          </div>
+        </form>
+        <!-- END FORM -->
+
+        <footer>
+          <p>© 2026 Academic Attendance Analytics</p>
+          <div class="footer-links">
+            <a href="#">System Status</a>
+            <a href="#">Help Center</a>
+          </div>
+        </footer>
+
+      </div>
+    </main>
+
+  </div>
+</body>
+
+</html>

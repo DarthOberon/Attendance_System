@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Academic Attendance System - Students Database</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --primary: #ec5b13;
+            --background-light: #f8f6f6;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --white: #ffffff;
+            --blue-100: #dbeafe;
+            --blue-800: #1e40af;
+            --purple-100: #f3e8ff;
+            --purple-800: #6b21a8;
+            --emerald-100: #d1fae5;
+            --emerald-800: #065f46;
+            --font-display: 'Public Sans', sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-display);
+            background-color: var(--background-light);
+            color: var(--slate-900);
+            min-height: 100vh;
+        }
+
+        .layout-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--slate-200);
+            background-color: var(--white);
+            padding: 0.75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        @media (min-width: 768px) {
+            .header { padding-left: 2.5rem; padding-right: 2.5rem; }
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+        }
+
+        .logo-icon .material-symbols-outlined {
+            font-size: 1.875rem;
+        }
+
+        .logo-text {
+            font-size: 1.125rem;
+            font-weight: 700;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+        }
+
+        .header-actions {
+            display: flex;
+            flex: 1;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+            height: 2.5rem;
+            padding: 0 1.25rem;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-add:hover { opacity: 0.9; }
+
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: rgba(236, 91, 19, 0.1);
+            border: 1px solid rgba(236, 91, 19, 0.2);
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        /* Content Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .main-container { flex-direction: row; }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 100%;
+            border-right: 1px solid var(--slate-200);
+            padding: 1rem;
+            background-color: var(--white);
+        }
+
+        @media (min-width: 768px) {
+            .sidebar { width: 16rem; }
+        }
+
+        .campus-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0.75rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .campus-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: rgba(236, 91, 19, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .campus-details h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .campus-details p {
+            font-size: 0.75rem;
+            color: var(--slate-500);
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            border-radius: 0.75rem;
+            transition: background-color 0.2s;
+            color: var(--slate-600);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .nav-item:hover { background-color: var(--slate-100); }
+
+        .nav-item.active {
+            background-color: rgba(236, 91, 19, 0.1);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .content-area { padding: 2.5rem; }
+        }
+
+        .page-header h1 {
+            font-size: 1.875rem;
+            font-weight: 900;
+            letter-spacing: -0.025em;
+        }
+
+        .page-header p {
+            color: var(--slate-500);
+        }
+
+        /* Search & Filter */
+        .search-bar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .search-bar-container { flex-direction: row; }
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--slate-400);
+        }
+
+        .search-input {
+            width: 100%;
+            height: 3rem;
+            padding-left: 3rem;
+            padding-right: 1rem;
+            background-color: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(236, 91, 19, 0.2);
+        }
+
+        .btn-filter {
+            height: 3rem;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            color: var(--slate-700);
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-filter:hover { background-color: var(--slate-50); }
+
+        /* Table */
+        .table-card {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            border: 1px solid var(--slate-200);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            background-color: var(--slate-50);
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--slate-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--slate-100);
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover { background-color: var(--slate-50); }
+
+        td {
+            padding: 1rem 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .roll-no { font-weight: 600; color: var(--slate-900); }
+        .enroll-no { color: var(--slate-500); }
+
+        .student-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .student-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: rgba(236, 91, 19, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .student-name { font-weight: 500; color: var(--slate-900); }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-blue { background-color: var(--blue-100); color: var(--blue-800); }
+        .badge-purple { background-color: var(--purple-100); color: var(--purple-800); }
+        .badge-emerald { background-color: var(--emerald-100); color: var(--emerald-800); }
+
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+
+        .btn-more {
+            background: none;
+            border: none;
+            color: var(--slate-400);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .btn-more:hover { color: var(--primary); }
+
+        /* Pagination */
+        .pagination-bar {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--slate-50);
+            border-top: 1px solid var(--slate-200);
+        }
+
+        .showing-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--slate-500);
+            text-transform: uppercase;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            border: 1px solid var(--slate-200);
+            background-color: var(--white);
+            color: var(--slate-600);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .page-btn:hover { background-color: var(--slate-50); }
+
+        .page-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+            font-weight: 700;
+            border: none;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--slate-200);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            color: var(--slate-400);
+            font-size: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer { flex-direction: row; justify-content: space-between; }
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .footer-links a:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+<div class="layout-wrapper">
+<header class="header">
+<div class="logo-container">
+<div class="logo-icon">
+<span class="material-symbols-outlined">school</span>
+</div>
+<h2 class="logo-text">Academic Portal</h2>
+</div>
+<div class="header-actions">
+<button class="btn-add">
+<span class="material-symbols-outlined" style="margin-right: 0.5rem; font-size: 0.875rem;">person_add</span>
+<span>Add Student</span>
+</button>
+<div class="user-avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCZuldtBqSDrBovQYbNp1huszYUBK1o25zi3a66VeFgHcifXdXRqjgkpCNVuQ-8H5m0BzXFEO8PSVzdpr1jUbfWiySULE8vPpRbOfiHRqhvSBYmX55a-8Q3g_gybBlFDYkq8q_8unz_LeIm1y1TIwfk8ODNUtpdkUcEm4cSQhQF65pj2Cyb9FpreXWM0VFSnxnOHxqrMnDUnQy9Vtt-vJ7_PCA-wkhB3yAwEDfiasg8vuCuuU9HgdW6A_9AnSRdI6Hpbc5E14z8tPA");'></div>
+</div>
+</header>
+<div class="main-container">
+<aside class="sidebar">
+<div class="campus-info">
+<div class="campus-icon">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div class="campus-details">
+<h3>Main Campus</h3>
+<p>AY 2023-24</p>
+</div>
+</div>
+<nav class="nav-links">
+<a class="nav-item" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="nav-item active" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">group</span>
+<span>Students</span>
+</a>
+<a class="nav-item" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>Attendance</span>
+</a>
+<a class="nav-item" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Reports</span>
+</a>
+<a class="nav-item" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</aside>
+<main class="content-area">
+<div class="page-header">
+<h1>Students Database</h1>
+<p>Manage and view student records across all departments and semesters.</p>
+</div>
+<div class="search-bar-container">
+<div class="search-input-wrapper">
+<span class="material-symbols-outlined search-icon">search</span>
+<input class="search-input" placeholder="Search Student by name, roll no, or enrollment..." type="text"/>
+</div>
+<button class="btn-filter">
+<span class="material-symbols-outlined">filter_list</span>
+<span>Filters</span>
+</button>
+</div>
+<div class="table-card">
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th style="width: 6rem;">Roll No</th>
+<th>Enrollment No</th>
+<th>Name</th>
+<th>Branch</th>
+<th class="text-center" style="width: 5rem;">Sem</th>
+<th class="text-center" style="width: 5rem;">Div</th>
+<th class="text-right">Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="roll-no">001</td>
+<td class="enroll-no">ENR2024001</td>
+<td>
+<div class="student-cell">
+<div class="student-avatar">RS</div>
+<span class="student-name">Rahul Sharma</span>
+</div>
+</td>
+<td><span class="badge badge-blue">CSE</span></td>
+<td class="text-center enroll-no">V</td>
+<td class="text-center enroll-no">A</td>
+<td class="text-right">
+<button class="btn-more">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr>
+<td class="roll-no">002</td>
+<td class="enroll-no">ENR2024002</td>
+<td>
+<div class="student-cell">
+<div class="student-avatar">PP</div>
+<span class="student-name">Priya Patel</span>
+</div>
+</td>
+<td><span class="badge badge-purple">ECE</span></td>
+<td class="text-center enroll-no">V</td>
+<td class="text-center enroll-no">B</td>
+<td class="text-right">
+<button class="btn-more">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr>
+<td class="roll-no">003</td>
+<td class="enroll-no">ENR2024003</td>
+<td>
+<div class="student-cell">
+<div class="student-avatar">AS</div>
+<span class="student-name">Aman Singh</span>
+</div>
+</td>
+<td><span class="badge badge-emerald">MECH</span></td>
+<td class="text-center enroll-no">III</td>
+<td class="text-center enroll-no">A</td>
+<td class="text-right">
+<button class="btn-more">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pagination-bar">
+<span class="showing-text">Showing 3 of 150 Students</span>
+<div class="pagination-controls">
+<button class="page-btn" disabled="">
+<span class="material-symbols-outlined" style="font-size: 0.875rem;">chevron_left</span>
+</button>
+<button class="page-btn active">1</button>
+<button class="page-btn">2</button>
+<button class="page-btn">3</button>
+<button class="page-btn">
+<span class="material-symbols-outlined" style="font-size: 0.875rem;">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<footer class="footer">
+<p>© 2024 Academic Attendance Management System. All Rights Reserved.</p>
+<div class="footer-links">
+<a href="#">Privacy Policy</a>
+<a href="#">Terms of Service</a>
+<a href="#">Support</a>
+</div>
+</footer>
+</main>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Attendance Results - Academic System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #ec5b13;
+      --background-light: #f8f6f6;
+      --white: #ffffff;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+      --green-100: #dcfce7;
+      --green-400: #4ade80;
+      --green-500: #22c55e;
+      --green-600: #16a34a;
+      --green-700: #15803d;
+      --red-100: #fee2e2;
+      --red-400: #f87171;
+      --red-500: #ef4444;
+      --red-600: #dc2626;
+      --red-700: #b91c1c;
+      --font-main: 'Public Sans', sans-serif;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--background-light);
+      color: var(--slate-900);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--white);
+      border-bottom: 1px solid var(--slate-200);
+      padding: 0.75rem 2.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--primary);
+    }
+
+    .logo-icon {
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(236, 91, 19, 0.1);
+      border-radius: 0.5rem;
+    }
+
+    .logo-text {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      letter-spacing: -0.025em;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--slate-600);
+      transition: color 0.2s;
+    }
+
+    nav a.active {
+      color: var(--primary);
+      font-weight: 600;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 0.25rem;
+    }
+
+    .user-avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      border: 2px solid rgba(236, 91, 19, 0.3);
+      background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCI2P_Yrn3IRuVx5RmE01BG3THcax1eRHn2diMur3bkrf7S0t3Vbl-Kkmxxh3xArow5UQCq-sjchq7aYM2ajO-Q6sOWyHJEgyC1MyQMeizLZ_eGDxFogNirnGzOo_QfZ9hylBvFzT_RCnWL2gplHKDSBJ4zP4iknHH8GXE0FlGgJkvplcBMErx6om1XD-H132P4SzutG5qbpE11Lm-btnOjdaUHETwk5LCD45glzaWykPbtpu-f_8ijNSkxvtC3Hk5JZGoEomdNvvY");
+      background-size: cover;
+      background-position: center;
+      margin-left: 2rem;
+    }
+
+    main {
+      padding: 2rem 0;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 2.25rem;
+      font-weight: 900;
+      color: var(--slate-900);
+      letter-spacing: -0.025em;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: var(--slate-500);
+      font-size: 1rem;
+    }
+
+    .metadata-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      background-color: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      border-right: 1px solid var(--slate-100);
+      padding: 0 1rem;
+    }
+
+    .meta-item:first-child {
+      padding-left: 0;
+    }
+
+    .meta-item:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .meta-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .meta-value {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background-color: var(--white);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      border-left: 4px solid var(--slate-400);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .stat-card.present {
+      border-left-color: var(--green-500);
+    }
+
+    .stat-card.absent {
+      border-left-color: var(--red-500);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--slate-500);
+    }
+
+    .stat-card.present .stat-label {
+      color: var(--green-600);
+    }
+
+    .stat-card.absent .stat-label {
+      color: var(--red-600);
+    }
+
+    .stat-value-group {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .stat-number {
+      font-size: 1.875rem;
+      font-weight: 900;
+      color: var(--slate-900);
+    }
+
+    .stat-percentage {
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .stat-card.present .stat-percentage {
+      color: var(--green-600);
+    }
+
+    .stat-card.absent .stat-percentage {
+      color: var(--red-600);
+    }
+
+    .tables-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .table-section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .table-section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+    }
+
+    .count-badge {
+      margin-left: auto;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .badge-present {
+      background-color: var(--green-100);
+      color: var(--green-700);
+    }
+
+    .badge-absent {
+      background-color: var(--red-100);
+      color: var(--red-700);
+    }
+
+    .table-card {
+      background-color: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead {
+      background-color: var(--slate-50);
+    }
+
+    th {
+      padding: 1rem 1.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 1rem 1.5rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    tbody tr:hover {
+      background-color: var(--slate-50);
+    }
+
+    .cell-bold {
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .cell-medium {
+      font-weight: 500;
+      color: var(--slate-700);
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .view-all-footer {
+      padding: 1rem;
+      text-align: center;
+      border-top: 1px solid var(--slate-100);
+    }
+
+    .view-all-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .view-all-btn:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      background-color: var(--white);
+      border-top: 1px solid var(--slate-200);
+      padding: 1.5rem 0;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .last-updated {
+      color: var(--slate-500);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-outline {
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      background-color: transparent;
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(236, 91, 19, 0.05);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      box-shadow: 0 10px 15px -3px rgba(236, 91, 19, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: #d14f10;
+    }
+
+    .material-symbols-outlined {
+      vertical-align: middle;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    @media (max-width: 1024px) {
+      .tables-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .metadata-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        padding: 0.75rem 1.5rem;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .footer-actions {
+        width: 100%;
+      }
+
+      .btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="display: flex; flex-direction: column; min-height: 100vh;">
+    <header>
+      <div class="logo-container">
+        <div class="logo-icon">
+          <span class="material-symbols-outlined">school</span>
+        </div>
+        <h2 class="logo-text">Academic System</h2>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: flex-end; flex: 1;">
+        <nav>
+          <a href="{{ url_for('dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('dashboard') }}">Classes</a>
+          <a class="active" href="#">Attendance</a>
+          <a href="{{ url_for('reports') }}">Reports</a>
+        </nav>
+        <div class="user-avatar"></div>
+      </div>
+    </header>
+    <main class="container">
+      <div class="page-header">
+        <h1>Attendance Results</h1>
+        <p>Detailed report for {{ lecture.subject }} — {{ lecture.branch }} Sem {{ lecture.semester }} Div {{
+          lecture.div }}</p>
+        <div class="metadata-grid">
+          <div class="meta-item">
+            <p class="meta-label">Subject</p>
+            <p class="meta-value">{{ lecture.subject }}</p>
+          </div>
+          <div class="meta-item">
+            <p class="meta-label">Date</p>
+            <p class="meta-value">{{ lecture.date }}</p>
+          </div>
+          <div class="meta-item">
+            <p class="meta-label">Branch</p>
+            <p class="meta-value">{{ lecture.branch }}</p>
+          </div>
+          <div class="meta-item">
+            <p class="meta-label">Semester</p>
+            <p class="meta-value">{{ lecture.semester }}</p>
+          </div>
+          <div class="meta-item">
+            <p class="meta-label">Division</p>
+            <p class="meta-value">{{ lecture.div }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <p class="stat-label" style="color: var(--slate-500);">Total Students</p>
+          <p class="stat-number">{{ total }}</p>
+        </div>
+        <div class="stat-card present">
+          <p class="stat-label">Present</p>
+          <div class="stat-value-group">
+            <p class="stat-number">{{ present|length }}</p>
+            <p class="stat-percentage">{{ percentage }}%</p>
+          </div>
+        </div>
+        <div class="stat-card absent">
+          <p class="stat-label">Absent</p>
+          <div class="stat-value-group">
+            <p class="stat-number">{{ absent|length }}</p>
+            <p class="stat-percentage">{{ 100 - percentage }}%</p>
+          </div>
+        </div>
+      </div>
+      <div class="tables-container">
+        <!-- Present Students Column -->
+        <div>
+          <div class="table-section-header">
+            <span class="material-symbols-outlined" style="color: var(--green-500);">check_circle</span>
+            <h2>PRESENT STUDENTS</h2>
+            <span class="count-badge badge-present">{{ present|length }} Students</span>
+          </div>
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 6rem;">Roll No</th>
+                  <th>Student Name</th>
+                  <th class="text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in present %}
+                <tr>
+                  <td class="cell-bold">{{ s.roll_number }}</td>
+                  <td class="cell-medium">{{ s.name }}</td>
+                  <td class="text-right">
+                    <span class="material-symbols-outlined"
+                      style="color:var(--green-500); font-size:1.25rem;">check_circle</span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Absent Students Column -->
+        <div>
+          <div class="table-section-header">
+            <span class="material-symbols-outlined" style="color: var(--red-500);">cancel</span>
+            <h2>ABSENT STUDENTS</h2>
+            <span class="count-badge badge-absent">{{ absent|length }} Students</span>
+          </div>
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 6rem;">Roll No</th>
+                  <th>Student Name</th>
+                  <th class="text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in absent %}
+                <tr>
+                  <td class="cell-bold">{{ s.roll_number }}</td>
+                  <td class="cell-medium">{{ s.name }}</td>
+                  <td class="text-right">
+                    <span class="material-symbols-outlined"
+                      style="color:var(--red-500); font-size:1.25rem;">cancel</span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div class="footer-content">
+        <div class="last-updated">
+          Date: {{ lecture.date }}
+        </div>
+        <div class="footer-actions">
+          <button class="btn btn-outline">
+            <span class="material-symbols-outlined">description</span>
+            Export CSV
+          </button>
+          <button class="btn btn-primary">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            Export PDF
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>

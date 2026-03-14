@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Attendance Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+        --primary: #ec5b13;
+        --bg-light: #f8f6f6;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --white: #ffffff;
+        --card-bg: #ffffff;
+        --input-bg: #f8fafc;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Public Sans', sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+        line-height: 1.5;
+    }
+
+    .layout-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        background: var(--white);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(236, 91, 19, 0.1);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 0.75rem;
+        background: #f1f5f9;
+        border: none;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(236, 91, 19, 0.2);
+        border: 1px solid rgba(236, 91, 19, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+    }
+
+    .main-content {
+        flex: 1;
+        padding: 2rem 1.5rem;
+        max-width: 1440px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .filter-section {
+        background: var(--white);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .select-wrapper {
+        position: relative;
+    }
+
+    .form-control {
+        width: 100%;
+        height: 44px;
+        padding: 0 1rem;
+        border-radius: 0.75rem;
+        background: var(--input-bg);
+        border: 1px solid var(--border-color);
+        font-size: 0.875rem;
+        appearance: none;
+    }
+
+    .select-icon {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .summary-card {
+        background: var(--white);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .table-container {
+        background: var(--white);
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    th {
+        background: #f8fafc;
+        padding: 1rem 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.875rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+
+    .pagination {
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fafafa;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .page-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        background: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .page-btn.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .footer-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0 1.5rem;
+        height: 48px;
+        border-radius: 0.75rem;
+        font-weight: 700;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        border: none;
+        transition: opacity 0.2s;
+    }
+
+    .btn-outline {
+        background: var(--white);
+        border: 1px solid var(--border-color);
+        color: #334155;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 10px 15px -3px rgba(236, 91, 19, 0.2);
+    }
+
+    .footer {
+        padding: 2rem 1.5rem;
+        border-top: 1px solid var(--border-color);
+        text-align: center;
+        font-size: 0.875rem;
+        color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+        .header { padding: 1rem; }
+        .main-content { padding: 1.5rem 1rem; }
+        .filter-grid { grid-template-columns: 1fr; }
+        .footer-actions { flex-direction: column; }
+    }
+</style>
+</head>
+<body><div class="layout-container">
+<header class="header">
+<div class="header-logo">
+<div class="logo-icon">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+</div>
+<h2 style="font-size: 1.25rem; font-weight: 700;">Attendance Reports</h2>
+</div>
+<div class="header-actions">
+<button class="icon-btn">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="user-avatar">
+<span class="material-symbols-outlined">person</span>
+</div>
+</div>
+</header>
+<main class="main-content">
+<section class="filter-section">
+<div class="filter-grid">
+<div class="form-group">
+<label class="form-label">Branch</label>
+<div class="select-wrapper">
+<select class="form-control">
+<option>Computer Science</option>
+<option>Information Technology</option>
+<option>Electronics</option>
+<option>Mechanical</option>
+</select>
+<span class="material-symbols-outlined select-icon">expand_more</span>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Semester</label>
+<div class="select-wrapper">
+<select class="form-control">
+<option>Semester 4</option>
+<option>Semester 5</option>
+<option>Semester 6</option>
+</select>
+<span class="material-symbols-outlined select-icon">expand_more</span>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Division</label>
+<div class="select-wrapper">
+<select class="form-control">
+<option>Division A</option>
+<option>Division B</option>
+<option>Division C</option>
+</select>
+<span class="material-symbols-outlined select-icon">expand_more</span>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Subject</label>
+<div class="select-wrapper">
+<select class="form-control">
+<option>Mathematics</option>
+<option>Data Structures</option>
+<option>Operating Systems</option>
+</select>
+<span class="material-symbols-outlined select-icon">expand_more</span>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">Select Date</label>
+<input class="form-control" type="date" value="2023-10-05"/>
+</div>
+</div>
+</section>
+<div class="summary-grid">
+<div class="summary-card">
+<div class="card-icon" style="background: #dbeafe; color: #2563eb;">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<div>
+<p style="font-size: 0.75rem; color: var(--text-muted);">Total Students</p>
+<p style="font-size: 1.125rem; font-weight: 700;">64</p>
+</div>
+</div>
+<div class="summary-card">
+<div class="card-icon" style="background: #dcfce7; color: #16a34a;">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<p style="font-size: 0.75rem; color: var(--text-muted);">Present</p>
+<p style="font-size: 1.125rem; font-weight: 700;">58</p>
+</div>
+</div>
+<div class="summary-card">
+<div class="card-icon" style="background: #fee2e2; color: #dc2626;">
+<span class="material-symbols-outlined">cancel</span>
+</div>
+<div>
+<p style="font-size: 0.75rem; color: var(--text-muted);">Absent</p>
+<p style="font-size: 1.125rem; font-weight: 700;">6</p>
+</div>
+</div>
+<div class="summary-card">
+<div class="card-icon" style="background: rgba(236, 91, 19, 0.1); color: var(--primary);">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div>
+<p style="font-size: 0.75rem; color: var(--text-muted);">Attendance Rate</p>
+<p style="font-size: 1.125rem; font-weight: 700;">90.6%</p>
+</div>
+</div>
+</div>
+<div class="table-container">
+<div style="overflow-x: auto;">
+<table>
+<thead>
+<tr>
+<th>Roll No</th>
+<th>Name</th>
+<th>Student ID</th>
+<th>Status</th>
+<th style="text-align: right;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="color: var(--primary); font-weight: 500;">101</td>
+<td>
+<div style="display: flex; align-items: center; gap: 0.75rem;">
+<div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">AJ</div>
+<span style="font-weight: 500;">Alice Johnson</span>
+</div>
+</td>
+<td style="color: var(--text-muted);">CS2023-0101</td>
+<td>
+<span class="status-badge" style="background: #dcfce7; color: #15803d;">
+<span class="badge-dot" style="background: #22c55e;"></span> Present
+                                </span>
+</td>
+<td style="text-align: right;">
+<button style="background:none; border:none; color: #94a3b8; cursor: pointer;"><span class="material-symbols-outlined" style="font-size: 20px;">edit</span></button>
+</td>
+</tr>
+<tr>
+<td style="color: var(--primary); font-weight: 500;">102</td>
+<td>
+<div style="display: flex; align-items: center; gap: 0.75rem;">
+<div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">BS</div>
+<span style="font-weight: 500;">Bob Smith</span>
+</div>
+</td>
+<td style="color: var(--text-muted);">CS2023-0102</td>
+<td>
+<span class="status-badge" style="background: #fee2e2; color: #b91c1c;">
+<span class="badge-dot" style="background: #ef4444;"></span> Absent
+                                </span>
+</td>
+<td style="text-align: right;">
+<button style="background:none; border:none; color: #94a3b8; cursor: pointer;"><span class="material-symbols-outlined" style="font-size: 20px;">edit</span></button>
+</td>
+</tr>
+<tr>
+<td style="color: var(--primary); font-weight: 500;">103</td>
+<td>
+<div style="display: flex; align-items: center; gap: 0.75rem;">
+<div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">CB</div>
+<span style="font-weight: 500;">Charlie Brown</span>
+</div>
+</td>
+<td style="color: var(--text-muted);">CS2023-0103</td>
+<td>
+<span class="status-badge" style="background: #dcfce7; color: #15803d;">
+<span class="badge-dot" style="background: #22c55e;"></span> Present
+                                </span>
+</td>
+<td style="text-align: right;">
+<button style="background:none; border:none; color: #94a3b8; cursor: pointer;"><span class="material-symbols-outlined" style="font-size: 20px;">edit</span></button>
+</td>
+</tr>
+<tr>
+<td style="color: var(--primary); font-weight: 500;">104</td>
+<td>
+<div style="display: flex; align-items: center; gap: 0.75rem;">
+<div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">DW</div>
+<span style="font-weight: 500;">David Wilson</span>
+</div>
+</td>
+<td style="color: var(--text-muted);">CS2023-0104</td>
+<td>
+<span class="status-badge" style="background: #dcfce7; color: #15803d;">
+<span class="badge-dot" style="background: #22c55e;"></span> Present
+                                </span>
+</td>
+<td style="text-align: right;">
+<button style="background:none; border:none; color: #94a3b8; cursor: pointer;"><span class="material-symbols-outlined" style="font-size: 20px;">edit</span></button>
+</td>
+</tr>
+<tr>
+<td style="color: var(--primary); font-weight: 500;">105</td>
+<td>
+<div style="display: flex; align-items: center; gap: 0.75rem;">
+<div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">EG</div>
+<span style="font-weight: 500;">Eva Garcia</span>
+</div>
+</td>
+<td style="color: var(--text-muted);">CS2023-0105</td>
+<td>
+<span class="status-badge" style="background: #fee2e2; color: #b91c1c;">
+<span class="badge-dot" style="background: #ef4444;"></span> Absent
+                                </span>
+</td>
+<td style="text-align: right;">
+<button style="background:none; border:none; color: #94a3b8; cursor: pointer;"><span class="material-symbols-outlined" style="font-size: 20px;">edit</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pagination">
+<p style="font-size: 0.875rem; color: var(--text-muted);">Showing 1 to 5 of 64 entries</p>
+<div class="btn-group">
+<button class="page-btn"><span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span></button>
+<button class="page-btn active">1</button>
+<button class="page-btn">2</button>
+<button class="page-btn">3</button>
+<button class="page-btn"><span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span></button>
+</div>
+</div>
+</div>
+<div class="footer-actions">
+<button class="btn btn-outline">
+<span class="material-symbols-outlined">table_view</span>
+                Download CSV
+            </button>
+<button class="btn btn-primary">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+                Download PDF Report
+            </button>
+</div>
+</main>
+<footer class="footer">
+<p>© 2023 Education Management Systems. All attendance records are securely stored and encrypted.</p>
+</footer>
+</div></body></html>
