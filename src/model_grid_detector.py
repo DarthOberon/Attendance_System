@@ -8,7 +8,7 @@ def detect_grid(image_path):
     img = cv2.imread(image_path)
     if img is None:
         print("Error: Image not found.")
-        return
+        return []  # Return empty list instead of None
 
     img = cv2.copyMakeBorder(img, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=[255, 255, 255])
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -40,10 +40,7 @@ def detect_grid(image_path):
     boxes.sort(key=lambda b: b[1])
 
     # --- Y-COORDINATE BASED ROW GROUPING ---
-    # Groups boxes by Y position instead of rigid every-3 counting.
-    # If one cell is missing, the old approach would corrupt ALL subsequent rows.
-    # This handles missing/extra cells gracefully — same logic as diary mode's group_by_lines().
-    Y_THRESHOLD = 10  # boxes within 10px vertically are on the same row
+    Y_THRESHOLD = 10
 
     raw_rows = []
     for box in boxes:
@@ -57,16 +54,18 @@ def detect_grid(image_path):
         if not placed:
             raw_rows.append({"y": y, "boxes": [box]})
 
-    # Sort each row left to right
-    # Keep rows with 3+ boxes, trim to exactly 3 (handles header row which may have 4 boxes)
     rows = []
     for raw_row in raw_rows:
         row = sorted(raw_row["boxes"], key=lambda b: b[0])
         if len(row) >= 3:
             rows.append(row[:3])
 
-    print(f"\n[INFO] Successfully structured {len(rows) - 1} data rows!")
-    print("\n--------Attendance Scan Results-----------")
+    print(f"[INFO] Successfully structured {len(rows) - 1} data rows!")
+
+    # --- COLLECT PRESENT ROLL NUMBERS ---
+    # Only present students go into this list.
+    # Flask marks everyone NOT in this list as ABSENT.
+    present_roll_numbers = []
 
     for index, row in enumerate(rows[1:], start=1):
 
@@ -79,11 +78,8 @@ def detect_grid(image_path):
         roll_no = "UNKNOWN"
 
         if ew > 10 and eh > 10:
-            # Trim bottom -6 to cut off the bottom border line that bleeds into digits
             enroll_crop = gray[ey+2 : ey+eh-6, ex+2 : ex+ew-2]
 
-            # Find digit contours to crop tightly around the actual number
-            # Removes excess whitespace so Tesseract gets a clean zoomed-in digit
             _, temp_thresh = cv2.threshold(enroll_crop, 150, 255, cv2.THRESH_BINARY_INV)
             digit_contours, _ = cv2.findContours(temp_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -99,30 +95,25 @@ def detect_grid(image_path):
                 digit_only = enroll_crop[dy:dy2, dx:dx2]
                 digit_only = cv2.copyMakeBorder(digit_only, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255)
             else:
-                # Fallback — no digit contour found, use full cell crop
                 digit_only = cv2.copyMakeBorder(enroll_crop, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255)
 
-            # Upscale 3x — Tesseract reads small cells much better at larger size
             digit_only = cv2.resize(digit_only, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
             digit_only = np.uint8(digit_only)
 
             _, enroll_thresh = cv2.threshold(digit_only, 150, 255, cv2.THRESH_BINARY)
 
             if enroll_thresh.size > 0:
-                # PSM 7 — single text line, best for 2+ digit numbers (10, 11, 110)
                 roll_no = pytesseract.image_to_string(
                     enroll_thresh,
                     config='--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789'
                 ).strip()
 
-                # PSM 8 fallback — single word, better for thin single digits like 1
                 if not roll_no:
                     roll_no = pytesseract.image_to_string(
                         enroll_thresh,
                         config='--psm 8 --oem 3 -c tessedit_char_whitelist=0123456789'
                     ).strip()
 
-                # PSM 13 last resort — raw line mode, catches what others miss
                 if not roll_no:
                     roll_no = pytesseract.image_to_string(
                         enroll_thresh,
@@ -132,8 +123,7 @@ def detect_grid(image_path):
         if roll_no == "":
             roll_no = "UNKNOWN"
 
-        # --- 2. OMR THE STATUS BOX (pixel counting) ---
-        # Instead of OCR, counts ink pixels — any mark (P, tick, X) = present
+        # --- 2. OMR THE STATUS BOX ---
         sx, sy, sw, sh = status_box
         margin = 4
 
@@ -142,24 +132,21 @@ def detect_grid(image_path):
             ink_pixels  = cv2.countNonZero(status_crop)
             is_present  = ink_pixels > 15
 
-            if is_present:
-                print(f"Roll No [{roll_no}]: ✅ PRESENT (Ink: {ink_pixels})")
-            else:
-                print(f"Roll No [{roll_no}]: ❌ ABSENT  (Ink: {ink_pixels})")
+            print(f"Row {index} | Roll [{roll_no}]: {'PRESENT' if is_present else 'ABSENT'} (Ink: {ink_pixels})")
+
+            # Only add to list if present AND roll number was successfully read
+            if is_present and roll_no != "UNKNOWN":
+                present_roll_numbers.append(roll_no)
         else:
-            print(f"Row {index}: ⚠️ Status box too small to read")
+            print(f"Row {index}: Status box too small to read")
 
-    # --- DRAW DETECTED CELLS FOR VISUAL VERIFICATION ---
-    boxes_img = img.copy()
-    for x, y, w, h in boxes:
-        cv2.rectangle(boxes_img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    print(f"\n[INFO] Sheet mode complete. Present: {present_roll_numbers}")
 
-    cv2.imshow("5. Detected Cells (Target_locked)", boxes_img)
-    print("\n[INFO] Success! Press any key on the image window to close.")
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # Return list of present roll numbers — same format as screenshot and diary mode
+    return present_roll_numbers
 
 
 if __name__ == "__main__":
     image_path = r"E:\AryanWork_10\IDT_ATTENDAC\input_images\sheet_sample6.png"
-    detect_grid(image_path)
+    present = detect_grid(image_path)
+    print(f"\nFinal Present List: {present}")
