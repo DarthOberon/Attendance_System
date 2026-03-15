@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Attendance Reports</title>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary: #ec5b13;
+      --primary-hover: #d14d0d;
+      --bg-light: #f8f6f6;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --white: #ffffff;
+      --input-bg: #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Public Sans', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    .layout-container { display: flex; flex-direction: column; min-height: 100vh; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 2.5rem;
+      background: var(--white);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-logo { display: flex; align-items: center; gap: 1rem; }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(236,91,19,0.1);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+    }
+
+    .header-nav { display: flex; align-items: center; gap: 2rem; }
+
+    .header-nav a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .header-nav a:hover { color: var(--primary); }
+    .header-nav a.active { color: var(--primary); font-weight: 600; border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+
+    .header-right { display: flex; align-items: center; gap: 1rem; border-left: 1px solid var(--border-color); padding-left: 1.5rem; }
+
+    .faculty-name { font-size: 0.875rem; font-weight: 700; color: var(--text-dark); }
+
+    .logout-btn {
+      background: #f1f5f9;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: #334155;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .logout-btn:hover { background: #fee2e2; color: #dc2626; }
+
+    .main-content {
+      flex: 1;
+      padding: 2rem 2.5rem;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .page-subtitle {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Summary cards */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-card {
+      background: var(--white);
+      padding: 1rem 1.25rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+    .card-value { font-size: 1.125rem; font-weight: 700; }
+
+    /* Table */
+    .table-container {
+      background: var(--white);
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+
+    th {
+      background: #f8fafc;
+      padding: 0.875rem 1.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.875rem;
+    }
+
+    tbody tr:hover { background: #f8fafc; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .td-primary { color: var(--primary); font-weight: 600; }
+    .td-muted { color: var(--text-muted); }
+    .td-bold { font-weight: 600; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    .view-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    .view-btn:hover { color: var(--primary); border-color: var(--primary); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state p { font-size: 0.875rem; margin-top: 0.5rem; }
+
+    /* Footer */
+    .footer {
+      padding: 1.5rem 2.5rem;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      background: var(--white);
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 768px) {
+      .header { padding: 0.75rem 1rem; }
+      .main-content { padding: 1.5rem 1rem; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .header-nav { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout-container">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-logo">
+        <div class="logo-icon">
+          <span class="material-symbols-outlined">assignment_turned_in</span>
+        </div>
+        <h2 style="font-size:1.125rem; font-weight:700;">Attendance Reports</h2>
+      </div>
+
+      <!-- FLASK: nav links -->
+      <nav class="header-nav">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('upload') }}">Upload</a>
+        <a href="{{ url_for('students') }}">Students</a>
+        <a class="active" href="{{ url_for('reports') }}">Reports</a>
+      </nav>
+
+      <div class="header-right">
+        <!-- FLASK: faculty name from session -->
+        <span class="faculty-name">{{ faculty_name }}</span>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+      </div>
+    </header>
+
+    <main class="main-content">
+
+      <h1 class="page-title">Attendance Reports</h1>
+      <p class="page-subtitle">All lecture records uploaded by you.</p>
+
+      <!-- SUMMARY CARDS — calculated from lectures list -->
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="card-icon" style="background:#dbeafe; color:#2563eb;">
+            <span class="material-symbols-outlined">menu_book</span>
+          </div>
+          <div>
+            <p class="card-label">Total Lectures</p>
+            <!-- FLASK: total number of lecture records -->
+            <p class="card-value">{{ lectures|length }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon" style="background:#dcfce7; color:#16a34a;">
+            <span class="material-symbols-outlined">check_circle</span>
+          </div>
+          <div>
+            <p class="card-label">Total Present</p>
+            <!-- FLASK: sum of all present counts across lectures -->
+            <p class="card-value">{{ lectures|sum(attribute='present_count') }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon" style="background:#fee2e2; color:#dc2626;">
+            <span class="material-symbols-outlined">cancel</span>
+          </div>
+          <div>
+            <p class="card-label">Total Absent</p>
+            <!-- FLASK: total absent = total - present across all lectures -->
+            <p class="card-value">{{ lectures|sum(attribute='total_count') - lectures|sum(attribute='present_count') }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon" style="background:rgba(236,91,19,0.1); color:var(--primary);">
+            <span class="material-symbols-outlined">analytics</span>
+          </div>
+          <div>
+            <p class="card-label">Avg Attendance</p>
+            {% if lectures|sum(attribute='total_count') > 0 %}
+              <p class="card-value">{{ ((lectures|sum(attribute='present_count') / lectures|sum(attribute='total_count')) * 100)|round(1) }}%</p>
+            {% else %}
+              <p class="card-value">—</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- LECTURES TABLE -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Subject</th>
+              <th>Branch</th>
+              <th>Sem</th>
+              <th>Div</th>
+              <th>Present</th>
+              <th>Absent</th>
+              <th>Rate</th>
+              <th style="text-align:right;">View</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if lectures %}
+              {% for lecture in lectures %}
+              {% set absent_count = lecture.total_count - lecture.present_count %}
+              {% set rate = ((lecture.present_count / lecture.total_count) * 100)|round(1) if lecture.total_count > 0 else 0 %}
+              <tr>
+                <td class="td-muted">{{ loop.index }}</td>
+                <td class="td-bold">{{ lecture.date }}</td>
+                <td>{{ lecture.subject }}</td>
+                <td class="td-primary">{{ lecture.branch }}</td>
+                <td class="td-muted">{{ lecture.semester }}</td>
+                <td class="td-muted">{{ lecture.div }}</td>
+
+                <!-- Present count with green badge -->
+                <td>
+                  <span class="status-badge" style="background:#dcfce7; color:#15803d;">
+                    <span class="badge-dot" style="background:#22c55e;"></span>
+                    {{ lecture.present_count }}
+                  </span>
+                </td>
+
+                <!-- Absent count with red badge -->
+                <td>
+                  <span class="status-badge" style="background:#fee2e2; color:#b91c1c;">
+                    <span class="badge-dot" style="background:#ef4444;"></span>
+                    {{ absent_count }}
+                  </span>
+                </td>
+
+                <!-- Attendance rate -->
+                <td class="td-bold" style="color: {% if rate >= 75 %}#16a34a{% else %}#dc2626{% endif %};">
+                  {{ rate }}%
+                </td>
+
+                <!-- FLASK: link to results page for this lecture -->
+                <td style="text-align:right;">
+                  <a href="{{ url_for('results', lecture_id=lecture.id) }}" class="view-btn">
+                    View Details
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="10">
+                  <div class="empty-state">
+                    <span class="material-symbols-outlined" style="font-size:2.5rem; color:#cbd5e1;">inbox</span>
+                    <p>No attendance records yet.</p>
+                    <p><a href="{{ url_for('upload') }}" style="color:var(--primary); font-weight:600;">Upload your first attendance</a></p>
+                  </div>
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      <p>© 2026 Attendance Management System. All attendance records are securely stored.</p>
+    </footer>
+
+  </div>
+</body>
+</html>
