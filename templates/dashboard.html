@@ -1,456 +1,384 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Professor Dashboard - Attendance System</title>
-  <!-- Tailwind CSS v3 with Plugins -->
-  <style data-purpose="custom-theme">
-    /* Global Reset & Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+  <title>Dashboard - Attendance System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
     :root {
-      --academic-blue-dark: #1e3a8a;
-      --academic-blue-medium: #1e40af;
-      --academic-blue-light: #eff6ff;
-      --slate-50: #f8fafc;
-      --slate-100: #f1f5f9;
-      --slate-200: #e2e8f0;
-      --slate-400: #94a3b8;
-      --slate-500: #64748b;
-      --slate-600: #475569;
-      --slate-700: #334155;
-      --slate-800: #1e293b;
-      --slate-900: #0f172a;
+      --primary: #ec5b13;
+      --primary-hover: #d14d0d;
+      --primary-light: #fdeee6;
+      --background: #f8f6f6;
+      --white: #ffffff;
+      --text-dark: #221610;
+      --text-muted: #6b5c54;
+      --border-color: #e2e0df;
+      --card-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+      --radius: 0.75rem;
       --green-500: #22c55e;
       --green-600: #16a34a;
     }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      background-color: var(--slate-50);
-      color: var(--slate-800);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Public Sans', sans-serif;
+      background-color: var(--background);
+      color: var(--text-dark);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       line-height: 1.5;
     }
 
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-
-    @media (min-width: 640px) {
-      .container {
-        padding: 0 1.5rem;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .container {
-        padding: 0 2rem;
-      }
-    }
-
-    /* Header */
-    .main-header {
-      background: white;
-      border-bottom: 1px solid var(--slate-200);
+    /* NAVBAR */
+    .navbar {
+      background-color: var(--white);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
     }
 
-    .header-content {
-      height: 4rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .nav-left { display: flex; align-items: center; gap: 0.75rem; }
 
-    .brand-logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--academic-blue-dark);
-    }
-
-    .user-nav {
+    .logo-box {
+      background-color: var(--primary);
+      color: var(--white);
+      width: 32px;
+      height: 32px;
+      border-radius: 0.5rem;
       display: flex;
       align-items: center;
-      gap: 1.5rem;
+      justify-content: center;
     }
 
-    .welcome-text {
-      color: var(--slate-600);
-      display: none;
-    }
+    .nav-title { font-weight: 700; font-size: 1.125rem; color: var(--text-dark); }
 
-    @media (min-width: 768px) {
-      .welcome-text {
-        display: block;
-      }
-    }
-
-    .welcome-text .user-name {
-      font-weight: 600;
-      color: var(--slate-800);
-    }
-
-    .logout-btn {
-      background-color: var(--slate-100);
-      color: var(--slate-700);
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      border: 1px solid var(--slate-200);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .logout-btn:hover {
-      background-color: #fef2f2;
-      color: #dc2626;
-    }
-
-    /* Secondary Navigation */
-    .sub-nav {
-      background: white;
-      border-bottom: 1px solid var(--slate-200);
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    }
-
-    .sub-nav-links {
-      display: flex;
-      gap: 2rem;
-    }
+    .nav-links { display: flex; gap: 2rem; }
 
     .nav-link {
-      padding: 1rem 0.25rem;
+      text-decoration: none;
+      color: var(--text-muted);
       font-size: 0.875rem;
       font-weight: 500;
-      color: var(--slate-500);
-      text-decoration: none;
       transition: color 0.2s;
     }
+    .nav-link:hover { color: var(--primary); }
+    .nav-link.active { color: var(--primary); font-weight: 600; }
 
-    .nav-link:hover {
-      color: var(--academic-blue-medium);
+    .nav-right { display: flex; align-items: center; gap: 1.25rem; }
+
+    .faculty-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.4rem 0.75rem;
+      background-color: var(--background);
+      border-radius: 0.5rem;
     }
 
-    .nav-link.active {
-      border-bottom: 2px solid var(--academic-blue-dark);
-      color: var(--academic-blue-dark);
+    .faculty-name { font-size: 0.875rem; font-weight: 600; color: var(--text-dark); }
+
+    .faculty-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+
+    .btn-logout {
+      background-color: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
       font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-logout:hover { background-color: var(--primary); color: var(--white); }
+
+    /* MAIN */
+    .container {
+      max-width: 1200px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
     }
 
-    /* Main Content */
-    .main-wrapper {
-      flex-grow: 1;
-      padding: 2rem 0;
-    }
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+    .page-header p { color: var(--text-muted); font-size: 1rem; }
 
-    /* Stats Section */
+    /* STAT CARDS */
     .stats-grid {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
 
-    @media (min-width: 768px) {
-      .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
     .stat-card {
-      background: white;
+      background: var(--white);
       padding: 1.5rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
     }
 
     .stat-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--slate-500);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
     }
 
-    .stat-value-container {
-      margin-top: 0.5rem;
-      display: flex;
-      align-items: baseline;
-    }
+    .stat-value-row { display: flex; align-items: baseline; gap: 0.5rem; }
 
-    .stat-number {
-      font-size: 1.875rem;
-      font-weight: 700;
-      color: var(--slate-900);
-    }
+    .stat-number { font-size: 2rem; font-weight: 800; color: var(--text-dark); line-height: 1; }
+    .stat-number.green { color: var(--green-600); }
 
     .stat-badge {
-      margin-left: 0.5rem;
       font-size: 0.75rem;
-      font-weight: 500;
-      padding: 0.125rem 0.5rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
       border-radius: 9999px;
     }
+    .badge-active { background-color: var(--primary-light); color: var(--primary); }
+    .badge-muted  { color: var(--text-muted); font-size: 0.875rem; }
 
-    .badge-active {
-      background-color: var(--academic-blue-light);
-      color: var(--academic-blue-medium);
-    }
-
-    .badge-muted {
-      color: var(--slate-400);
-    }
-
-    .percentage-text {
-      color: var(--green-600);
-    }
-
-    .progress-container {
-      margin-left: 1rem;
+    .progress-wrapper {
+      margin-left: 0.75rem;
       flex-grow: 1;
-      background-color: var(--slate-100);
+      background-color: var(--border-color);
       border-radius: 9999px;
-      height: 0.5rem;
-    }
-
-    .progress-bar {
-      background-color: var(--green-500);
-      height: 100%;
-      border-radius: 9999px;
-    }
-
-    /* Table Section */
-    .data-section {
-      background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--slate-200);
+      height: 8px;
       overflow: hidden;
     }
 
-    .section-header {
+    .progress-fill {
+      height: 100%;
+      border-radius: 9999px;
+      background-color: var(--green-500);
+    }
+
+    /* TABLE CARD */
+    .table-card {
+      background-color: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .table-card-header {
       padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: rgba(248, 250, 252, 0.5);
+      background-color: #faf9f9;
     }
 
-    .section-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--slate-800);
-    }
+    .table-card-title { font-size: 1rem; font-weight: 700; color: var(--text-dark); }
 
     .view-all-link {
       font-size: 0.875rem;
-      color: #1d4ed8;
-      font-weight: 500;
+      color: var(--primary);
+      font-weight: 600;
       text-decoration: none;
-      background: none;
-      border: none;
-      cursor: pointer;
     }
+    .view-all-link:hover { text-decoration: underline; }
 
-    .view-all-link:hover {
-      text-decoration: underline;
-    }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    thead { background-color: #faf9f9; }
 
-    .table-container {
-      overflow-x: auto;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    .data-table th {
-      background-color: var(--slate-50);
-      padding: 0.75rem 1.5rem;
+    th {
+      padding: 0.875rem 1.5rem;
       font-size: 0.75rem;
       font-weight: 700;
-      color: var(--slate-500);
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      border-bottom: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .data-table td {
+    td {
       padding: 1rem 1.5rem;
       font-size: 0.875rem;
-      border-bottom: 1px solid var(--slate-100);
+      border-bottom: 1px solid #f1f0ef;
+      color: var(--text-dark);
     }
 
-    .data-table tr:hover {
-      background-color: var(--slate-50);
-    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background-color: #faf9f9; }
 
-    .data-table .cell-date {
-      font-weight: 500;
-      color: var(--slate-900);
-    }
+    .cell-date  { font-weight: 600; }
+    .cell-muted { color: var(--text-muted); }
+    .cell-center { text-align: center; }
+    .cell-bold-right { text-align: right; font-weight: 700; }
 
-    .data-table .cell-secondary {
-      color: var(--slate-600);
-    }
-
-    .data-table .cell-center {
-      text-align: center;
-    }
-
-    .data-table .cell-right {
-      text-align: right;
-    }
-
-    .data-table .cell-bold-right {
-      text-align: right;
-      font-weight: 600;
-      color: var(--slate-900);
-    }
-
-    /* Footer */
+    /* FOOTER */
     .main-footer {
-      background: white;
-      border-top: 1px solid var(--slate-200);
-      padding: 1.5rem 0;
+      background: var(--white);
+      border-top: 1px solid var(--border-color);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
       margin-top: auto;
     }
 
-    .footer-text {
-      color: var(--slate-400);
-      font-size: 0.875rem;
-      text-align: center;
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .navbar { padding: 0.75rem 1rem; }
+      .nav-links { display: none; }
+      .container { padding: 0 1rem; margin: 1.5rem auto; }
     }
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col font-sans">
-  <!-- BEGIN: MainHeader -->
-  <header class="main-header" data-purpose="top-navigation">
-    <div class="container">
-      <div class="header-content">
-        <div class="brand-logo" id="app-logo">Attendance System</div>
-        <div class="user-nav">
-          <span class="welcome-text">Welcome: <span class="user-name">Prof. John Doe</span></span>
-          <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-        </div>
+<body>
+
+  <!-- NAVBAR — matches students/reports/upload style -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="logo-box">
+        <span class="material-symbols-outlined">how_to_reg</span>
       </div>
+      <span class="nav-title">Attendance System</span>
     </div>
-  </header>
-  <!-- END: MainHeader -->
-  <!-- BEGIN: SecondaryNavigation -->
-  <nav class="sub-nav" data-purpose="secondary-navigation">
-    <div class="container">
-      <div class="sub-nav-links">
-        <a class="nav-link active" href="{{ url_for('dashboard') }}">Dashboard</a>
-        <a class="nav-link" href="{{ url_for('upload') }}">Upload Attendance</a>
-        <a class="nav-link" href="{{ url_for('students') }}">Students</a>
-        <a class="nav-link" href="{{ url_for('reports') }}">Reports</a>
+
+    <div class="nav-links">
+      <a class="nav-link active" href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a class="nav-link" href="{{ url_for('upload') }}">Upload Attendance</a>
+      <a class="nav-link" href="{{ url_for('students') }}">Students</a>
+      <a class="nav-link" href="{{ url_for('reports') }}">Reports</a>
+    </div>
+
+    <div class="nav-right">
+      <div class="faculty-info">
+        <div class="faculty-avatar">
+          <span class="material-symbols-outlined" style="font-size:18px;">person</span>
+        </div>
+        <!-- FLASK: faculty name from session -->
+        <span class="faculty-name">{{ faculty_name }}</span>
       </div>
+      <!-- FLASK: logout -->
+      <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
     </div>
   </nav>
-  <!-- END: SecondaryNavigation -->
-  <!-- BEGIN: MainContent -->
-  <main class="main-wrapper container">
-    <!-- BEGIN: HeroStatsSection -->
-    <section class="stats-grid" data-purpose="hero-stats">
-      <!-- Total Students Card -->
+
+  <div class="container">
+
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p>Welcome back! Here's your attendance overview for today.</p>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
       <div class="stat-card">
         <span class="stat-label">Total Students</span>
-        <div class="stat-value-container">
-          <span class="stat-number">120</span>
+        <div class="stat-value-row">
+          <!-- FLASK: total students in this college -->
+          <span class="stat-number">{{ total_students }}</span>
           <span class="stat-badge badge-active">Active</span>
         </div>
       </div>
-      <!-- Attendance Today Card -->
+
       <div class="stat-card">
         <span class="stat-label">Attendance Today</span>
-        <div class="stat-value-container">
-          <span class="stat-number">95</span>
-          <span class="stat-badge badge-muted">/ 120 students</span>
+        <div class="stat-value-row">
+          <!-- FLASK: today's present count -->
+          <span class="stat-number">{{ today_present }}</span>
+          <span class="stat-badge badge-muted">/ {{ total_students }} students</span>
         </div>
       </div>
-      <!-- Attendance Percentage Card -->
+
       <div class="stat-card">
         <span class="stat-label">Attendance Percentage</span>
-        <div class="stat-value-container">
-          <span class="stat-number percentage-text">79%</span>
-          <div class="progress-container">
-            <div class="progress-bar" style="width: 79%"></div>
+        <div class="stat-value-row">
+          <!-- FLASK: percentage and progress bar -->
+          <span class="stat-number green">{{ today_percentage }}%</span>
+          <div class="progress-wrapper">
+            <div class="progress-fill" style="width: {{ today_percentage }}%;"></div>
           </div>
         </div>
       </div>
-    </section>
-    <!-- END: HeroStatsSection -->
-    <!-- BEGIN: RecentAttendanceTable -->
-    <section class="data-section" data-purpose="attendance-records">
-      <div class="section-header">
-        <h2 class="section-title">Recent Attendance Records</h2>
-        <button class="view-all-link">View All</button>
-      </div>
-      <div class="table-container">
-        <table class="data-table" id="attendance-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Subject</th>
-              <th>Branch</th>
-              <th class="cell-center">Semester</th>
-              <th class="cell-right">Students Marked</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Record 1 -->
-            <tr>
-              <td class="cell-date">12-03-2026</td>
-              <td class="cell-secondary">AI</td>
-              <td class="cell-secondary">CSE</td>
-              <td class="cell-center">4</td>
-              <td class="cell-bold-right">95</td>
-            </tr>
-            <!-- Record 2 -->
-            <tr>
-              <td class="cell-date">11-03-2026</td>
-              <td class="cell-secondary">DBMS</td>
-              <td class="cell-secondary">CSE</td>
-              <td class="cell-center">4</td>
-              <td class="cell-bold-right">92</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-    <!-- END: RecentAttendanceTable -->
-  </main>
-  <!-- END: MainContent -->
-  <!-- BEGIN: Footer -->
-  <footer class="main-footer">
-    <div class="container footer-text">
-      © 2026 Attendance Management System. All rights reserved.
     </div>
-  </footer>
-  <!-- END: Footer -->
-</body>
 
+    <!-- RECENT LECTURES TABLE -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h2 class="table-card-title">Recent Attendance Records</h2>
+        <a href="{{ url_for('reports') }}" class="view-all-link">View All</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Subject</th>
+            <th>Branch</th>
+            <th class="cell-center">Semester</th>
+            <th class="cell-center">Div</th>
+            <th class="cell-bold-right">Present</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- FLASK: loop through recent lectures -->
+          {% if recent_lectures %}
+            {% for lecture in recent_lectures %}
+            <tr>
+              <td class="cell-date">{{ lecture.date }}</td>
+              <td class="cell-muted">{{ lecture.subject }}</td>
+              <td class="cell-muted">{{ lecture.branch }}</td>
+              <td class="cell-center">{{ lecture.semester }}</td>
+              <td class="cell-center">{{ lecture.div }}</td>
+              <td class="cell-bold-right">{{ lecture.present_count }}</td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">
+                No attendance records yet.
+                <a href="{{ url_for('upload') }}" style="color:var(--primary); font-weight:600; margin-left:0.5rem;">Upload now →</a>
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <footer class="main-footer">
+    © 2026 Attendance Management System. All rights reserved.
+  </footer>
+
+</body>
 </html>
