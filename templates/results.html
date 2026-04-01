@@ -6,9 +6,12 @@
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Attendance Results - Academic System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
   <style>
     :root {
       --primary: #ec5b13;
@@ -606,14 +609,14 @@
           Date: {{ lecture.date }}
         </div>
         <div class="footer-actions">
-          <button class="btn btn-outline">
+          <a href="{{ url_for('export_csv', lecture_id=lecture.id) }}" class="btn btn-outline">
             <span class="material-symbols-outlined">description</span>
             Export CSV
-          </button>
-          <button class="btn btn-primary">
+          </a>
+          <a href="{{ url_for('export_pdf', lecture_id=lecture.id) }}" class="btn btn-primary">
             <span class="material-symbols-outlined">picture_as_pdf</span>
             Export PDF
-          </button>
+          </a>
         </div>
       </div>
     </footer>

@@ -435,6 +435,104 @@ def reports():
 
 
 # -------------------------------------------------------------------
+# EXPORT CSV
+# -------------------------------------------------------------------
+
+@app.route('/export/csv/<int:lecture_id>')
+@login_required
+def export_csv(lecture_id):
+    import csv
+    import io
+    from flask import Response
+
+    conn   = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM lectures WHERE id = ?", (lecture_id,))
+    lecture = cursor.fetchone()
+
+    if not lecture:
+        conn.close()
+        return redirect(url_for('dashboard'))
+
+    cursor.execute('''
+        SELECT s.roll_number, s.enrollment_number, s.name, a.status
+        FROM attendance a
+        JOIN students s ON a.student_id = s.id
+        WHERE a.lecture_id = ?
+        ORDER BY CAST(s.roll_number AS INTEGER)
+    ''', (lecture_id,))
+    records = cursor.fetchall()
+    conn.close()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(['Roll No', 'Enrollment No', 'Name', 'Status',
+                     'Subject', 'Branch', 'Semester', 'Div', 'Date'])
+
+    for r in records:
+        writer.writerow([
+            r['roll_number'], r['enrollment_number'], r['name'], r['status'],
+            lecture['subject'], lecture['branch'],
+            lecture['semester'], lecture['div'], lecture['date']
+        ])
+
+    output.seek(0)
+    filename = f"attendance_{lecture['subject']}_{lecture['date']}.csv"
+
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': f'attachment; filename={filename}'}
+    )
+
+
+# -------------------------------------------------------------------
+# EXPORT PDF (print-friendly page)
+# -------------------------------------------------------------------
+
+@app.route('/export/pdf/<int:lecture_id>')
+@login_required
+def export_pdf(lecture_id):
+    conn   = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM lectures WHERE id = ?", (lecture_id,))
+    lecture = cursor.fetchone()
+
+    if not lecture:
+        conn.close()
+        return redirect(url_for('dashboard'))
+
+    cursor.execute('''
+        SELECT s.roll_number, s.enrollment_number, s.name, a.status
+        FROM attendance a
+        JOIN students s ON a.student_id = s.id
+        WHERE a.lecture_id = ?
+        ORDER BY CAST(s.roll_number AS INTEGER)
+    ''', (lecture_id,))
+    records  = cursor.fetchall()
+    conn.close()
+
+    present    = [r for r in records if r['status'] == 'PRESENT']
+    absent     = [r for r in records if r['status'] == 'ABSENT']
+    total      = len(records)
+    percentage = round((len(present) / total * 100), 1) if total > 0 else 0
+
+    return render_template('print_attendance.html',
+        lecture    = lecture,
+        records    = records,
+        present    = present,
+        absent     = absent,
+        total      = total,
+        percentage = percentage
+    )
+
+
+
+
+# -------------------------------------------------------------------
 # RUN
 # -------------------------------------------------------------------
 
