@@ -468,6 +468,32 @@
         flex: 1;
       }
     }
+
+    @media print {
+      header {
+        display: none;
+      }
+
+      footer {
+        display: none;
+      }
+
+      .stats-grid {
+        break-inside: avoid;
+      }
+
+      table {
+        page-break-inside: auto;
+      }
+
+      tr {
+        page-break-inside: avoid;
+      }
+
+      body {
+        background: white;
+      }
+    }
   </style>
 </head>
 
@@ -613,10 +639,10 @@
             <span class="material-symbols-outlined">description</span>
             Export CSV
           </a>
-          <a href="{{ url_for('export_pdf', lecture_id=lecture.id) }}" class="btn btn-primary">
+          <button onclick="window.print()" class="btn btn-primary">
             <span class="material-symbols-outlined">picture_as_pdf</span>
             Export PDF
-          </a>
+          </button>
         </div>
       </div>
     </footer>
