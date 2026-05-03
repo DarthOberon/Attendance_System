@@ -58,7 +58,7 @@ Faculty takes a **single photo** of their attendance record → the system autom
 ## 📸 Application Screenshots
 
 ### 🔐 Login System
-![Login Page](screenshots/Login.png)
+![Login Page](Screenshots/Login.png)
 
 ### 📊 Dashboard
 ![Dashboard](Screenshots/Dashboard.png)
