@@ -61,16 +61,16 @@ Faculty takes a **single photo** of their attendance record → the system autom
 ![Login Page](screenshots/Login.png)
 
 ### 📊 Dashboard
-![Dashboard](screenshots/Dashboard.png)
+![Dashboard](Screenshots/Dashboard.png)
 
 ### 📤 Attendance Upload & OCR Processing
-![Upload Attendance](screenshots/Upload.png)
+![Upload Attendance](Screenshots/Upload.png)
 
 ### 👥 Students Database
-![Students Database](screenshots/Database.png)
+![Students Database](Screenshots/Database.png)
 
 ### 📈 Attendance Reports
-![Reports](screenshots/Reports.png)
+![Reports](Screenshots/Reports.png)
 
 
 ---
