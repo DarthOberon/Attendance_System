@@ -70,7 +70,7 @@ Faculty takes a **single photo** of their attendance record → the system autom
 ![Students Database](Screenshots/Database.png)
 
 ### 📈 Attendance Reports
-![Reports](Screenshots/Reports.png)
+![Reports](Screenshots/Report.png)
 
 
 ---
