@@ -55,7 +55,10 @@ Faculty takes a **single photo** of their attendance record → the system autom
 - 🏫 **Multi-College Support** — multiple branches and semesters
 
 ---
+## 📸 Application Screenshots
 
+
+---
 ## 🏗️ System Architecture
 
 ```
@@ -218,7 +221,7 @@ See the complete present/absent breakdown. Export as CSV or print as PDF.
 - Handles **digital screenshots** of attendance lists (WhatsApp, Excel, notes)
 - Uses **Tesseract PSM 6** with regex-based number filtering
 - Accepts roll numbers (1-3 digits) and enrollment numbers (13 digits)
-- Accuracy: ~99% on clean digital text
+- Accuracy: ~97% on clean digital text
 
 ### 📄 Sheet Mode
 - Handles **photographed printed attendance sheets**
@@ -226,8 +229,7 @@ See the complete present/absent breakdown. Export as CSV or print as PDF.
 - Projection-based line detection for robust row/column identification
 - Per-cell adaptive thresholding handles varying lighting conditions
 - **OMR-style P mark detection** using solidity-based blob analysis
-- Accuracy: ~100% on well-photographed portrait-orientation sheets
-
+- Accuracy: High accuracy on well-photographed portrait-orientation sheets
 ---
 
 ## 🔬 Technical Highlights
