@@ -34,7 +34,7 @@ Instead of replacing the paper-based system, this project **digitizes it**.
 
 Faculty takes a **single photo** of their attendance record → the system automatically extracts roll numbers using OCR → attendance is saved directly to the database.
 
-**No hardware. No internet dependency. No behavioral change required for faculty.**
+**No additional hardware. No internet dependency. No behavioral change required for faculty.**
 
 ---
 
